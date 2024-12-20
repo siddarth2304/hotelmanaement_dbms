@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Chef</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Hotel Management System</a>
+            <div class="navbar-links">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('employees') }}">Employees</a>
+                <a href="{{ url_for('customers') }}">Customers</a>
+                <a href="{{ url_for('add_hotel') }}">Add Hotel</a>
+                <a href="{{ url_for('add_employee') }}">Add Employee</a>
+                <a href="{{ url_for('add_chef') }}">Add Chef</a>
+                <a href="{{ url_for('add_menu_item') }}">Add Menu</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content section -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Add Chef</h1>
+
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div class="alert alert-success" role="alert">
+            {{ success }}
+        </div>
+        {% endif %}
+
+        <!-- Form to add chef -->
+        <form method="POST">
+            <div class="form-group">
+                <label for="ssn">SSN:</label>
+                <input type="text" class="form-control" id="ssn" name="ssn" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_join">Date of Joining:</label>
+                <input type="date" class="form-control" id="date_of_join" name="date_of_join" required>
+            </div>
+            <div class="form-group">
+                <label for="cuisine">Cuisine:</label>
+                <input type="text" class="form-control" id="cuisine" name="cuisine" required>
+            </div>
+            <div class="form-group">
+                <label for="hotel_id">Hotel ID:</label>
+                <input type="number" class="form-control" id="hotel_id" name="hotel_id" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Chef</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
