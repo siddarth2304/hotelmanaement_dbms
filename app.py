@@ -24,18 +24,50 @@ def index():
     cursor.close()
     connection.close()
     return render_template('index.html', hotels=hotels)
-
-
-# Route to display all employees
 @app.route('/employees')
 def employees():
     connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM employee')  # Changed from employees to employee
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute('SELECT emp_id, name, department, phone FROM employee')
     employees = cursor.fetchall()
     cursor.close()
     connection.close()
     return render_template('employees.html', employees=employees)
+
+
+
+@app.route('/add_employee', methods=['GET', 'POST'])
+def add_employee():
+    if request.method == 'POST':
+        # Get data from the form
+        emp_id = request.form['emp_id']
+        name = request.form['name']
+        date_of_joining = request.form['date_of_joining']
+        department = request.form['department']
+        ssn = request.form['ssn']
+        phone = request.form['phone']
+        
+        # Validate input fields
+        if not emp_id or not name or not department or not ssn or not phone:
+            error_message = "Please fill all the fields."
+            return render_template('add_employee.html', error=error_message)
+        
+        # Insert into database
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            'INSERT INTO employee (emp_id, name, date_of_joining, department, ssn, phone) VALUES (%s, %s, %s, %s, %s, %s)',
+            (emp_id, name, date_of_joining, department, ssn, phone)
+        )
+        connection.commit()
+        cursor.close()
+        connection.close()
+        
+        success_message = "Employee added successfully!"
+        return render_template('add_employee.html', success=success_message)
+
+    return render_template('add_employee.html')
+
 
 
 @app.route('/hotel/<int:hotel_id>/menu')
@@ -43,20 +75,30 @@ def hotel_menu(hotel_id):
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    # Retrieve menu items associated with the hotel
-    query = '''
-        SELECT fi.item_id, fi.name, fi.price, fi.type
-        FROM food_item fi
-        JOIN menu m ON fi.menu_id = m.menu_id
-        WHERE m.hotel_id = %s
-    '''
-    cursor.execute(query, (hotel_id,))
-    menu_items = cursor.fetchall()
+    error = None
+    menu_items = []
+    
+    try:
+        query = '''
+            SELECT fi.item_id, fi.name, fi.price, fi.type
+            FROM food_item fi
+            JOIN menu m ON fi.menu_id = m.menu_id
+            WHERE m.hotel_id = %s
+        '''
+        cursor.execute(query, (hotel_id,))
+        menu_items = cursor.fetchall()
+
+        # Check if menu_items is empty
+        if not menu_items:
+            error = "No menu items available for this hotel."
+
+    except Exception as e:
+        error = f"Error fetching menu items: {e}"
 
     cursor.close()
     connection.close()
 
-    return render_template('menu.html', menu_items=menu_items, hotel_id=hotel_id)
+    return render_template('menu.html', menu_items=menu_items, hotel_id=hotel_id, error=error)
 
 
 
@@ -164,38 +206,6 @@ def add_hotel():
 
 
 
-@app.route('/add_employee', methods=['GET', 'POST'])
-def add_employee():
-    if request.method == 'POST':
-        # Get data from the form
-        emp_id = request.form['emp_id']
-        name = request.form['name']
-        date_of_joining = request.form['date_of_joining']
-        department = request.form['department']
-        ssn = request.form['ssn']
-        phone = request.form['phone']
-        
-        # Validate input fields
-        if not emp_id or not name or not department or not ssn or not phone:
-            error_message = "Please fill all the fields."
-            return render_template('add_employee.html', error=error_message)
-        
-        # Insert into database
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(
-            'INSERT INTO employee (emp_id, name, date_of_joining, department, ssn, phone) VALUES (%s, %s, %s, %s, %s, %s)',
-            (emp_id, name, date_of_joining, department, ssn, phone)
-        )
-        connection.commit()
-        cursor.close()
-        connection.close()
-        
-        success_message = "Employee added successfully!"
-        return render_template('add_employee.html', success=success_message)
-
-    return render_template('add_employee.html')
-
 
 @app.route('/add_menu_item', methods=['GET', 'POST'])
 def add_menu_item():
@@ -203,42 +213,62 @@ def add_menu_item():
     cursor = connection.cursor()
 
     if request.method == 'POST':
-        # Safely accessing form fields using .get() to prevent errors if fields are missing
-        name = request.form.get('name')
-        price = request.form.get('price')
-        item_type = request.form.get('type')
-        menu_id = request.form.get('menu_id')
-        category_id = request.form.get('category_id') or None  # Default to None if category_id is not provided
-        hotel_id = request.form.get('hotel_id')  # Added hotel_id for menu item
+        # Get data from the form
+        name = request.form['name']
+        price = request.form['price']
+        item_type = request.form['type']
+        menu_id = request.form['menu_id']
+        hotel_id = request.form['hotel_id']
 
-        # Check if required fields are provided, otherwise return an error message
-        if not name or not price or not menu_id or not hotel_id:
+        # Validate input fields
+        if not name or not price or not item_type or not menu_id or not hotel_id:
             error_message = "Please fill in all required fields!"
             menus = get_menus()
             hotels = get_hotels()
             return render_template('add_menu_item.html', error=error_message, menus=menus, hotels=hotels)
 
         try:
-            # Insert the menu item with the hotel_id
+            # Insert the menu item with the hotel_id and menu_id
             cursor.execute(
-                'INSERT INTO food_item (name, price, type, menu_id, category_id, hotel_id) VALUES (%s, %s, %s, %s, %s, %s)',
-                (name, price, item_type, menu_id, category_id, hotel_id)
+                'INSERT INTO food_item (name, price, type, menu_id, hotel_id) VALUES (%s, %s, %s, %s, %s)',
+                (name, price, item_type, menu_id, hotel_id)
             )
             connection.commit()
-            success_message = "Menu item added successfully!"
-            # Fetch menus for the dropdown and pass hotels too
-            return render_template('add_menu_item.html', success=success_message, menus=get_menus(), hotels=get_hotels())
-        except mysql.connector.Error as err:
-            error_message = f"An error occurred: {err}"
-            return render_template('add_menu_item.html', error=error_message, menus=get_menus(), hotels=get_hotels())
-    else:
-        # Fetch the menus and hotels to populate the dropdowns
-        menus = get_menus()
-        hotels = get_hotels()  # Function to get hotels
-        return render_template('add_menu_item.html', menus=menus, hotels=hotels)
 
+            success_message = "Menu item added successfully!"
+            # Fetch menus and hotels to pass them back to the template
+            menus = get_menus()
+            hotels = get_hotels()
+            return render_template('add_menu_item.html', success=success_message, menus=menus, hotels=hotels)
+        
+        except Exception as e:
+            error_message = f"An error occurred: {e}"
+            return render_template('add_menu_item.html', error=error_message, menus=get_menus(), hotels=get_hotels())
+
+    # Fetch the menus and hotels to populate the dropdowns
+    menus = get_menus()
+    hotels = get_hotels()
+    return render_template('add_menu_item.html', menus=menus, hotels=hotels)
+
+# Function to fetch all menus
+def get_menus():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT menu_id, name FROM menu')
+    menus = cursor.fetchall()
     cursor.close()
     connection.close()
+    return menus
+
+# Function to fetch all hotels
+def get_hotels():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT hotel_id, name FROM hotel')
+    hotels = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return hotels
 
 # Function to fetch hotels
 def get_hotels():
@@ -264,6 +294,7 @@ def get_menus():
 
 
 # Route to add new customer
+# Route to add new customer
 @app.route('/add_customer', methods=['GET', 'POST'])
 def add_customer():
     if request.method == 'POST':
@@ -271,30 +302,38 @@ def add_customer():
         name = request.form['name']
         address = request.form['address']
         phone_no = request.form['phone_no']
+        
+        # Validate input fields
+        if not c_id or not name or not address or not phone_no:
+            error_message = "Please fill all the fields."
+            return render_template('add_customer.html', error=error_message)
+
+        # Insert into customer table
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute(
-            'INSERT INTO customer (c_id, name, address, phone_no) VALUES (%s, %s, %s, %s)',  # Changed from customers to customer
+            'INSERT INTO customer (c_id, name, address, phone_no) VALUES (%s, %s, %s, %s)',
             (c_id, name, address, phone_no)
         )
         connection.commit()
         cursor.close()
         connection.close()
-        return redirect(url_for('customers'))
+
+        success_message = "Customer added successfully!"
+        return render_template('add_customer.html', success=success_message)
+
     return render_template('add_customer.html')
 
-
-# Route to show all customers
 @app.route('/customers')
 def customers():
     connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM customer')
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute('SELECT customer_id, name, address, city, state, phone_no FROM customer')
     customers = cursor.fetchall()
     cursor.close()
     connection.close()
-    
     return render_template('customers.html', customers=customers)
+
 
 
 # Route to show all orders
@@ -339,6 +378,42 @@ def deliveries():
     cursor.close()
     connection.close()
     return render_template('deliveries.html', deliveries=deliveries)
+    
+    
+@app.route('/queries_route', methods=['GET', 'POST'])
+def queries_route():
+    predefined_queries = [
+        {"name": "Total Spending by Customers", "query": "SELECT c.name AS customer_name, SUM(o.amount) AS total_spent FROM customer c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name HAVING SUM(o.amount) > 50;"},
+        {"name": "Employee Details Ordered by Department", "query": "SELECT name AS emp_name, department, phone AS phone_no FROM employee ORDER BY department, name DESC;"},
+        {"name": "Employee Shift Roles", "query": "SELECT name AS emp_name, shift AS shift_role FROM employee;"},
+        {"name": "Hotels with Revenue > 1M and Expenditure < 600K", "query": "SELECT name AS hotel_name, revenue_planned, expenditure_expected FROM hotel WHERE revenue_planned > 1000000 AND expenditure_expected < 600000;"},
+        {"name": "Food Items with Discounts", "query": "SELECT name AS food_item_name, price AS item_price, price * 0.9 AS discounted_price FROM food_item WHERE price > 10;"},
+        {"name": "Total Number of Orders Per Customer", "query": "SELECT c.name AS customer_name, COUNT(o.order_id) AS total_orders FROM customer c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name;"},
+        {"name": "Average Order Amount by Customers", "query": "SELECT c.name AS customer_name, AVG(o.amount) AS average_order FROM customer c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name;"},
+        {"name": "All Food Items with Categories", "query": "SELECT f.name AS food_item_name, fc.name AS category_name FROM food_item f JOIN food_category fc ON f.category_id = fc.category_id;"},
+        {"name": "Highest Revenue Hotel", "query": "SELECT name AS hotel_name, revenue_planned AS highest_revenue FROM hotel ORDER BY revenue_planned DESC LIMIT 1;"},
+        {"name": "Count of Employees by Department", "query": "SELECT department, COUNT(emp_id) AS total_employees FROM employee GROUP BY department;"}
+    ]
+
+    results = None
+    columns = None
+    selected_query = None
+
+    if request.method == 'POST':
+        query_index = int(request.form.get('query_index'))
+        selected_query = predefined_queries[query_index]["name"]
+        query = predefined_queries[query_index]["query"]
+
+        # Connect to the database and execute the query
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]  # Extract column names
+        cursor.close()
+        connection.close()
+
+    return render_template('queries.html', predefined_queries=predefined_queries, results=results, columns=columns, selected_query=selected_query)
 
 
 # Route to add a new delivery

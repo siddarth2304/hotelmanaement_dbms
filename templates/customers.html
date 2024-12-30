@@ -3,28 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customers</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <title>Customer List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f5ec; /* Soft beige background */
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: #d7c5aa; /* Beige-toned navbar */
+            color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .navbar-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .navbar-links a:hover {
+            background: #b39b84; /* Slightly darker beige hover effect */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #ffffff; /* White container with slight shadow */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #4a4a4a;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background-color: #c4b08c; /* Accent color */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: #fafafa; /* Light beige table background */
+            border: 1px solid #e0dcd3; /* Border matching the theme */
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        table th,
+        table td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid #e0dcd3;
+        }
+
+        table th {
+            background-color: #ede4d4; /* Beige header */
+            color: #4a4a4a;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+        }
+
+        table td {
+            color: #4a4a4a;
+            font-size: 1rem;
+        }
+
+        table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        table tbody tr:hover {
+            background-color: #f4ede4; /* Subtle hover effect */
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h1 class="text-center">Customer List</h1>
-        <table class="table table-bordered table-striped">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h2>Hotel Management System</h2>
+        </div>
+        <div class="navbar-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('employees') }}">Employees</a>
+            <a href="{{ url_for('customers') }}">Customers</a>
+            <a href="{{ url_for('add_hotel') }}">Add Hotel</a>
+            <a href="{{ url_for('add_customer') }}">Add Customer</a>
+        </div>
+    </nav>
+
+    <!-- Customer Table -->
+    <div class="container">
+        <h1>Customer List</h1>
+        <table>
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
                     <th>Address</th>
+                    <th>City</th>
+                    <th>State</th>
                     <th>Phone</th>
                 </tr>
             </thead>
             <tbody>
                 {% for customer in customers %}
                 <tr>
-                    <td>{{ customer[0] }}</td>  <!-- Adjust according to your column indices -->
-                    <td>{{ customer[1] }}</td>
-                    <td>{{ customer[2] }}</td>
-                    <td>{{ customer[3] }}</td>
+                    <td>{{ customer.customer_id }}</td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.address or 'None' }}</td>
+                    <td>{{ customer.city or 'None' }}</td>
+                    <td>{{ customer.state or 'None' }}</td>
+                    <td>{{ customer.phone_no or 'None' }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -32,3 +185,4 @@
     </div>
 </body>
 </html>
+

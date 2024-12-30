@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employees</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Employee List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Inline styling for demo purposes (move to styles.css) */
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to right, #ece9e6, #ffffff);
-            color: #333;
+            background: #f9f5ec; /* Soft beige background */
+            color: #4a4a4a;
+            line-height: 1.6;
         }
 
         .navbar {
@@ -21,72 +20,123 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 2rem;
-            background: #34495e;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: #d7c5aa; /* Beige-toned navbar */
+            color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand h2 {
             margin: 0;
             font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 1.5rem;
         }
 
         .navbar-links a {
-            margin: 0 1rem;
-            color: white;
+            color: #ffffff;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
         }
 
         .navbar-links a:hover {
-            color: #f39c12;
+            background: #b39b84; /* Slightly darker beige hover effect */
         }
 
         .container {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 2rem;
-            background: white;
+            background: #ffffff; /* White container with slight shadow */
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
             text-align: center;
-            font-size: 2rem;
-            color: #2c3e50;
+            font-size: 1.8rem;
+            color: #4a4a4a;
             margin-bottom: 2rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background-color: #c4b08c; /* Accent color */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #fafafa; /* Light beige table background */
+            border: 1px solid #e0dcd3; /* Border matching the theme */
+            border-radius: 6px;
+            overflow: hidden;
         }
 
-        table th, table td {
+        table th,
+        table td {
             text-align: left;
             padding: 1rem;
-            border: 1px solid #ddd;
+            border-bottom: 1px solid #e0dcd3;
         }
 
         table th {
-            background-color: #f39c12;
-            color: white;
+            background-color: #ede4d4; /* Beige header */
+            color: #4a4a4a;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.1rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
         }
 
-        table tr:nth-child(even) {
-            background-color: #f8f9f9;
+        table td {
+            color: #4a4a4a;
+            font-size: 1rem;
         }
 
-        table tr:hover {
-            background-color: #f5f5f5;
-            cursor: pointer;
+        table tbody tr {
             transition: background-color 0.3s ease;
+        }
+
+        table tbody tr:hover {
+            background-color: #f4ede4; /* Subtle hover effect */
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
         }
     </style>
 </head>
@@ -105,23 +155,28 @@
         </div>
     </nav>
 
+    <!-- Employee Table -->
     <div class="container">
         <h1>Employees</h1>
         <table>
-            <tr>
-                <th>Employee ID</th>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Phone</th>
-            </tr>
-            {% for employee in employees %}
-            <tr>
-                <td>{{ employee[0] }}</td>
-                <td>{{ employee[1] }}</td>
-                <td>{{ employee[3] }}</td>
-                <td>{{ employee[5] }}</td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in employees %}
+                <tr>
+                    <td>{{ employee.emp_id }}</td>
+                    <td>{{ employee.name }}</td>
+                    <td>{{ employee.department or 'None' }}</td>
+                    <td>{{ employee.phone or 'None' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 </body>

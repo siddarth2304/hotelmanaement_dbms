@@ -6,11 +6,77 @@
     <title>Add Chef</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Beige color scheme */
+        body {
+            background-color: #f5f5dc; /* light beige background */
+            color: #4f4f4f; /* dark text for readability */
+        }
+
+        .navbar {
+            background-color: #6c4f3d; /* dark beige/navy brown color for navbar */
+        }
+
+        .navbar-brand {
+            color: #f5f5dc; /* light beige text for navbar brand */
+        }
+
+        .navbar-links a {
+            color: #f5f5dc;
+            margin-right: 15px;
+            text-decoration: none;
+        }
+
+        .navbar-links a:hover {
+            color: #d4bfa7; /* subtle beige on hover */
+        }
+
+        .container {
+            background-color: #fff8e1; /* soft beige background for form container */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+
+        h1 {
+            color: #5f4b3a; /* dark beige for header */
+        }
+
+        .form-label {
+            color: #5f4b3a; /* dark beige text for labels */
+        }
+
+        .btn-primary {
+            background-color: #d4bfa7; /* beige button color */
+            border-color: #d4bfa7; /* match button border */
+        }
+
+        .btn-primary:hover {
+            background-color: #bfa68d; /* darker beige on hover */
+            border-color: #bfa68d; /* match border color on hover */
+        }
+
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da; /* light red background */
+            color: #721c24; /* red text */
+        }
+
+        .alert-success {
+            background-color: #d4edda; /* light green background */
+            color: #155724; /* green text */
+        }
+    </style>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('index') }}">Hotel Management System</a>
             <div class="navbar-links">
@@ -26,7 +92,7 @@
     </nav>
 
     <!-- Main content section -->
-    <div class="container mt-5">
+    <div class="container">
         <h1 class="text-center mb-4">Add Chef</h1>
 
         {% if error %}
@@ -43,24 +109,24 @@
 
         <!-- Form to add chef -->
         <form method="POST">
-            <div class="form-group">
-                <label for="ssn">SSN:</label>
+            <div class="form-group mb-3">
+                <label for="ssn" class="form-label">SSN:</label>
                 <input type="text" class="form-control" id="ssn" name="ssn" required>
             </div>
-            <div class="form-group">
-                <label for="name">Name:</label>
+            <div class="form-group mb-3">
+                <label for="name" class="form-label">Name:</label>
                 <input type="text" class="form-control" id="name" name="name" required>
             </div>
-            <div class="form-group">
-                <label for="date_of_join">Date of Joining:</label>
+            <div class="form-group mb-3">
+                <label for="date_of_join" class="form-label">Date of Joining:</label>
                 <input type="date" class="form-control" id="date_of_join" name="date_of_join" required>
             </div>
-            <div class="form-group">
-                <label for="cuisine">Cuisine:</label>
+            <div class="form-group mb-3">
+                <label for="cuisine" class="form-label">Cuisine:</label>
                 <input type="text" class="form-control" id="cuisine" name="cuisine" required>
             </div>
-            <div class="form-group">
-                <label for="hotel_id">Hotel ID:</label>
+            <div class="form-group mb-3">
+                <label for="hotel_id" class="form-label">Hotel ID:</label>
                 <input type="number" class="form-control" id="hotel_id" name="hotel_id" required>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Add Chef</button>

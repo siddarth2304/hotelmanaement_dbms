@@ -9,11 +9,11 @@
 <body>
     <div class="container my-5">
         <h1 class="text-center">Menu for Hotel ID: {{ hotel_id }}</h1>
-        
+
         {% if error %}
             <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
-        
+
         {% if menu_items %}
             <table class="table table-striped">
                 <thead>
@@ -38,7 +38,7 @@
         {% else %}
             <p class="text-center">No menu items available for this hotel.</p>
         {% endif %}
-        
+
         <div class="text-center mt-4">
             <a href="{{ url_for('add_menu_item') }}" class="btn btn-primary">Add Menu Item</a>
         </div>

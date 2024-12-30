@@ -3,77 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Management System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Luxury Hotel Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-beige: #FAF3E0;
+            --secondary-beige: #EBE5D5;
+            --accent-brown: #B4A284;
+            --dark-brown: #4A4238;
+            --text-dark: #2C2518;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-beige);
+            color: var(--text-dark);
+        }
+
+        .navbar {
+            background: rgba(74, 66, 56, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            color: var(--primary-beige) !important;
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+        }
+
+        .nav-link {
+            color: var(--primary-beige) !important;
+            margin: 0 10px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-beige) !important;
+        }
+
+        section {
+            padding: 100px 0;
+        }
+
+        #hero {
+            background: linear-gradient(135deg, var(--accent-brown), var(--dark-brown));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            color: var(--primary-beige);
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbBIfEn6WH8VdKWGPrlajoydjrGs2VHYfuqQ&s') center/cover;
+            opacity: 0.15;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        #hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        #hero p {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .btn-custom {
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-brown);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--accent-brown);
+            color: var(--accent-brown);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--accent-brown);
+            color: var(--primary-beige);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+        }
+
+        .section-title p {
+            color: var(--accent-brown);
+            font-size: 1.2rem;
+        }
+
+        .card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .card-title {
+            color: var(--dark-brown);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        #hotels, #employees {
+            background-color: var(--secondary-beige);
+        }
+
+        .management-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .management-card i {
+            font-size: 2.5rem;
+            color: var(--accent-brown);
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background: var(--dark-brown);
+            color: var(--primary-beige);
+            padding: 60px 0 30px;
+            text-align: center;
+        }
+
+        .social-links {
+            margin: 30px 0;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-beige);
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--accent-brown);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            #hero h1 {
+                font-size: 2.5rem;
+            }
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-hotel"></i> Hotel Management
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#hero">
+                <i class="fas fa-hotel"></i> NITHUU
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('employees') }}">Employees</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('customers') }}">Customers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('add_hotel') }}">Add Hotel</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('add_employee') }}">Add Employee</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary nav-link text-white" href="{{ url_for('add_chef') }}">Add Chef</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary nav-link text-white" href="{{ url_for('add_menu_item') }}">Add Menu Item</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#hero">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#hotels">Hotels</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#employees">Employees</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#customers">Customers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#add-section">Add Items</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Main content section -->
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Hotels</h1>
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <div class="hero-content" data-aos="fade-up">
+                <h1>Welcome to Hotel Management</h1>
+                <p>Manage your hotels with elegance and efficiency</p>
+                <a href="#hotels" class="btn btn-custom btn-primary">
+                    Explore Hotels <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+   <!-- Hotels Section -->
+<section id="hotels">
+    <div class="container">
+        <div class="section-title" data-aos="fade-up">
+            <h2>Our Hotels</h2>
+            <p>Discover our collection of premium properties</p>
+        </div>
         <div class="row">
             {% for hotel in hotels %}
-            <div class="col-md-4">
-                <div class="card shadow border-0">
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="card">
+                    <!-- Dynamically set the image source to the URL stored in hotel[6] -->
+                    <img src="{{ hotel[9] }}" class="card-img-top" alt="Hotel Image">
                     <div class="card-body">
                         <h5 class="card-title">{{ hotel[1] }}</h5>
                         <p class="card-text">{{ hotel[2] }} - {{ hotel[5] }}</p>
                         <a href="{{ url_for('hotel_menu', hotel_id=hotel[0]) }}" class="btn btn-outline-primary w-100 mb-2">View Menu</a>
-                        <a href="{{ url_for('hotel_chefs', hotel_id=hotel[0]) }}" class="btn btn-outline-secondary w-100">View Chefs</a>
+                        <a href="{{ url_for('hotel_chefs', hotel_id=hotel[0]) }}" class="btn btn-primary w-100">View Chefs</a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+</section>
+
+    <!-- Employees Section -->
+    <section id="employees">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2>Employees</h2>
+                <p>Manage our dedicated team members</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center" data-aos="fade-up">
+                    <a href="{{ url_for('employees') }}" class="btn btn-primary btn-custom mb-3 w-100">View All Employees</a>
+                    <a href="{{ url_for('add_employee') }}" class="btn btn-outline-primary btn-custom w-100">Add New Employee</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customers Section -->
+    <section id="customers">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2>Customers</h2>
+                <p>Track and manage customer relationships</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center" data-aos="fade-up">
+                    <a href="{{ url_for('customers') }}" class="btn btn-primary btn-custom w-100">View All Customers</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Items Section -->
+    <section id="add-section" class="bg-light">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2>Management Controls</h2>
+                <p>Add and manage system components</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4" data-aos="fade-up">
+                    <div class="management-card">
+                        <i class="fas fa-hotel"></i>
+                        <h4 class="mb-4">Hotel Management</h4>
+                        <a href="{{ url_for('add_hotel') }}" class="btn btn-primary btn-custom w-100">Add New Hotel</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="management-card">
+                        <i class="fas fa-utensils"></i>
+                        <h4 class="mb-4">Chef Management</h4>
+                        <a href="{{ url_for('add_chef') }}" class="btn btn-primary btn-custom w-100">Add New Chef</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="management-card">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h4 class="mb-4">Menu Management</h4>
+                        <a href="{{ url_for('add_menu_item') }}" class="btn btn-primary btn-custom w-100">Add Menu Item</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p>&copy; 2024 Hotel Management System. All Rights Reserved.</p>
+    <footer>
+        <div class="container">
+            <h3>Hotel Management System</h3>
+            <p>Excellence in hospitality management</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <p>&copy; 2024 Hotel Management System. All Rights Reserved.</p>
+        </div>
     </footer>
 
-    <!-- Bootstrap JS and dependencies -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 500,
+            once: true
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(74, 66, 56, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(74, 66, 56, 0.95)';
+            }
+        });
+    </script>
 </body>
 </html>
-
